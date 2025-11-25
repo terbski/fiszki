@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiszki - Nauka Słówek</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div id="app" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div id="flashcard" class="bg-white rounded-lg shadow-lg p-8 cursor-pointer min-h-64 flex flex-col justify-center">
+                <div id="front" class="text-center">
+                    <div class="text-3xl font-bold text-blue-600" id="phrase"></div>
+                </div>
+                <div id="back" class="hidden">
+                    <div class="text-lg font-semibold mb-4" id="definition"></div>
+                    <div class="text-gray-600 italic" id="example"></div>
+                </div>
+            </div>
+            
+            <div class="flex justify-between mt-4">
+                <button id="prevBtn" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                    ← Poprzednia
+                </button>
+                <span class="py-2" id="counter"></span>
+                <button id="nextBtn" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                    Następna →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+  { phrase: "at the top of", definition: "at the highest part of something", example: "He was standing at the top of the stairs." },
+  { phrase: "find out", definition: "to get information, after trying to discover it or by chance", example: "Did you find out whether there are any seats left?" },
+  { phrase: "get in the way of", definition: "to prevent someone from doing something, or prevent something from happening", example: "Your social life must not get in the way of your studies." },
+  { phrase: "it's about time", definition: "used to say strongly that you think something should happen soon or should already have happened", example: "It's about time our team won." },
+  { phrase: "keep on", definition: "to continue doing something, or to do something many times", example: "You just have to keep on trying." },
+  { phrase: "let someone down", definition: "to not do something that someone trusts or expects you to do", example: "The worst feeling is having let our fans down." },
+  { phrase: "let someone know", definition: "to inform someone", example: "Let me know when you arrive home." },
+  { phrase: "look down on someone", definition: "to think that you are better than someone else", example: "Mr Garcia looks down on anyone who hasn't had a college education." },
+  { phrase: "look up", definition: "if a situation is looking up, it is improving", example: "Things are looking up for High Street retailers." },
+  { phrase: "make sense", definition: "to have a clear meaning and be easy to understand", example: "Read this and tell me if it makes sense." },
+  { phrase: "make up your mind", definition: "to decide which of two or more choices you want", example: "He couldn't make up his mind about what to do with the money." },
+  { phrase: "no way", definition: "used to emphasise that you will not agree or be able to do something", example: "There's no way I'm going to pay £500 just for a weekend in Paris." },
+  { phrase: "not mind", definition: "to not feel annoyed or upset about something", example: "I don't mind the heat, in fact I quite like it." },
+  { phrase: "put off", definition: "to delay doing something or to arrange to do something at a later time", example: "The match has been put off until tomorrow because of bad weather." },
+  { phrase: "take it easy", definition: "to relax and not do very much", example: "Take things easy for a few days and you should be all right." },
+  { phrase: "take it out on someone", definition: "to treat someone badly because you are upset or angry about something else", example: "I'm sorry you've had a bad day, but don't take it out on me." },
+  { phrase: "bond over", definition: "to connect with someone or form a friendship over common experiences", example: "We bonded over hamburgers and black and white movies." },
+  { phrase: "click with", definition: "to immediately understand or like someone", example: "I clicked with her the first time I met her." },
+  { phrase: "confide in", definition: "to tell someone about something very private or secret", example: "She confided in her best friend." },
+  { phrase: "have a mutual friend", definition: "to have the same friend as another person", example: "We discovered that we have a mutual friend, Susan Jones." },
+  { phrase: "hit it off with", definition: "if two people hit it off, they like each other as soon as they meet", example: "I knew you'd hit it off with Mike." },
+  { phrase: "on the same wavelength", definition: "having the same opinions and feelings as someone else", example: "Dad is not on the same wavelength as me." },
+  { phrase: "party with", definition: "to enjoy yourself with a group of other people", example: "She partied with her friends until early in the morning." },
+  { phrase: "socialise with", definition: "to spend time with other people in a friendly way", example: "They don't socialise with their neighbors much." },
+  { phrase: "bump into", definition: "to meet someone who you know, when you were not expecting to", example: "I bumped into Jean in town." },
+  { phrase: "come between", definition: "to make people argue and feel angry with each other", example: "I didn't want to come between a husband and wife." },
+  { phrase: "drift apart", definition: "if people drift apart, their relationship gradually ends", example: "Over the years my college friends and I have drifted apart." },
+  { phrase: "fall out", definition: "to have a quarrel", example: "They fell out over some stupid little issue." },
+  { phrase: "hang around", definition: "to spend a lot of time with someone", example: "The people I used to hang around with were much older than me." },
+  { phrase: "make up", definition: "to become friendly with someone again after you have had an argument", example: "Have you made up with Patty yet?" },
+  { phrase: "stop by", definition: "to make a short visit to a place or person's home", example: "Daniel stopped by the store on his way home." },
+  { phrase: "take to", definition: "to start to like someone or something", example: "Charles was an odd character whom Kelly had never really taken to." },
+  { phrase: "warm to", definition: "to begin to like someone you have just met", example: "Bruce didn't warm to him as he had to Casey." },
+  { phrase: "build in", definition: "to make something so that it is a permanent part of a wall, room etc", example: "You could build in a wardrobe with mirrored doors." },
+  { phrase: "demolish", definition: "to completely destroy a building", example: "The entire east wing of the building was demolished in the fire." },
+  { phrase: "merge", definition: "to combine, or to join things together to form one thing", example: "The villages have grown and merged together over the years." },
+  { phrase: "modernise", definition: "to make something such as a system or building more modern", example: "This is a tastefully modernised old farmhouse." },
+  { phrase: "reconstruct", definition: "to build something again after it has been destroyed or damaged", example: "The task ahead is to reconstruct the building." },
+  { phrase: "refurbish", definition: "to decorate and repair something to improve its appearance", example: "The Grand Hotel has been completely refurbished." },
+  { phrase: "restore", definition: "to repair an old building so that it is in its original condition", example: "The church was carefully restored after the war." },
+  { phrase: "spruce up", definition: "to make yourself or something look neater and tidier", example: "The cottage had been spruced up a bit since her last visit." },
+  { phrase: "architecture", definition: "the style and design of a building or buildings", example: "He admired the architecture of Venice." },
+  { phrase: "built-up", definition: "a built-up area has a lot of buildings and not many open spaces", example: "He was fined for speeding in a built-up area." },
+  { phrase: "construction", definition: "the process of building things such as houses, bridges, roads etc", example: "They are planning the construction of a new airport." },
+  { phrase: "industrial estate", definition: "a piece of land where there are factories and businesses", example: "The firm's plant employs 92 people on the town's industrial estate." },
+  { phrase: "outskirts", definition: "the parts of a town or city that are furthest from the centre", example: "They live on the outskirts of Paris." },
+  { phrase: "residence", definition: "a house, especially a large or official one", example: "This is the ambassador's residence." },
+  { phrase: "residential", definition: "a residential part of a town consists of private houses", example: "This is a quiet residential neighbourhood." },
+  { phrase: "suburban", definition: "related to a suburb, or in a suburb", example: "He lived in a quiet suburban street." },
+  { phrase: "be completely blown away", definition: "to be very impressed by something", example: "I was completely blown away by the children's performance." },
+  { phrase: "can't get enough of", definition: "to enjoy something so much that you want more and more of it", example: "Her millions of fans can't get enough of her." },
+  { phrase: "get an adrenalin rush", definition: "a physical feeling of intense excitement", example: "He gets an adrenaline rush from dangerous sports." },
+  { phrase: "get stuck in", definition: "to start doing something eagerly and with a lot of energy", example: "Take your jacket off and get stuck in!" },
+  { phrase: "have the time of your life", definition: "to enjoy yourself very much", example: "He had the time of his life at the wedding party." },
+  { phrase: "lose track of time", definition: "to fail to notice that time is passing", example: "I was so involved in the book that I lost track of time." },
+  { phrase: "lose yourself", definition: "to be paying so much attention to something that you don't notice anything else", example: "She listened intently to the music, losing herself in its beauty." },
+  { phrase: "once-in-a-lifetime experience", definition: "an experience that is very important because you will probably only have it once", example: "Visiting the Niagra Falls was a once-in-a-lifetime experience." },
+  { phrase: "buttery", definition: "tasting like butter or containing butter", example: "It has a delicious buttery taste." },
+  { phrase: "cheesy", definition: "tasting like cheese or containing cheese", example: "It has a cheesy sauce." },
+  { phrase: "creamy", definition: "containing cream or thick and smooth like cream", example: "The custard was smooth and creamy." },
+  { phrase: "doughy", definition: "with a soft texture, like dough", example: "The mixture was doughy." },
+  { phrase: "fruity", definition: "tasting or smelling strongly of fruit", example: "This is a very fruity wine." },
+  { phrase: "juicy", definition: "containing a lot of juice", example: "As a starter, we had delicious juicy tomatoes stuffed with rice." },
+  { phrase: "lemony", definition: "smelling or tasting of lemons", example: "It has a lovely lemony flavour." },
+  { phrase: "minty", definition: "tasting or smelling of mint", example: "The drink has a fresh, minty flavour." },
+  { phrase: "nutty", definition: "tasting like, or containing, nuts", example: "This coffee has a rich nutty flavour." },
+  { phrase: "peppery", definition: "tasting or smelling of pepper", example: "It is made with a delicious peppery sauce." },
+  { phrase: "salty", definition: "tasting of or containing salt", example: "The french fries were too salty for me." },
+  { phrase: "sugary", definition: "containing sugar, or tasting like sugar", example: "Eat fruit between meals, and try to avoid sugary snacks." },
+  { phrase: "come out on top", definition: "to win a difficult struggle or argument", example: "It's difficult to predict who will come out on top." },
+  { phrase: "con", definition: "to get money from someone by deceiving them", example: "He conned me out of £300." },
+  { phrase: "disgraceful", definition: "bad, embarrassing, or unacceptable", example: "It's a disgraceful waste of taxpayers' money." },
+  { phrase: "fake", definition: "to make something seem real in order to deceive people", example: "She faked her father's signature on the cheque." },
+  { phrase: "get away with", definition: "to not be caught or punished when you have done something wrong", example: "No one insults my family and gets away with it!" },
+  { phrase: "hold their heads up", definition: "to behave as if you are proud of yourself or respect yourself", example: "They may have lost the game, but I still think they've earned the right to hold their heads up today." },
+  { phrase: "let someone win", definition: "to allow or make it possible for someone to win", example: "I'm determined not to let them win." },
+  { phrase: "not the done thing", definition: "a way of behaving that is not socially acceptable", example: "It is not the done thing for teachers to hit children." },
+  { phrase: "play fair", definition: "to do something in a fair and honest way", example: "In international trade, very few countries play fair." },
+  { phrase: "win at all costs", definition: "to win regardless of the effort or costs involved", example: "We must avoid a court case at all costs." },
+  { phrase: "be unbeaten", definition: "to not be defeated", example: "Gloucester still the only unbeaten team." },
+  { phrase: "bend the rules", definition: "to do something which is not usually allowed", example: "He was prepared to bend the rules on this occasion." },
+  { phrase: "concede", definition: "to admit that you are not going to win a game, argument, battle etc", example: "The army defended the capital but was finally obliged to concede." },
+  { phrase: "dive", definition: "to fall down deliberately in order to unfairly win a free kick or penalty", example: "Was he really hit or did he dive?" },
+  { phrase: "play for time", definition: "to try to delay something so that you have more time to prepare", example: "The rebels may be playing for time while they try to get more weapons." },
+  { phrase: "put someone off", definition: "to make it difficult for someone to pay attention by talking, making noise etc", example: "It puts me off when you watch me all the time." },
+  { phrase: "the favourite", definition: "the team or player that is expected to win", example: "Italy were the favourites to win the World Cup." },
+  { phrase: "the underdog", definition: "the person or team that is weaker and expected to be unsuccessful", example: "Crowds often feel sympathy for the underdog." },
+  { phrase: "adversary", definition: "a country or person you are fighting or competing against", example: "She defeated her old adversary." },
+  { phrase: "bitter rivals", definition: "a competitor who you have strong feelings of dislike about", example: "The two men are bitter rivals for the party leadership." },
+  { phrase: "collaboration", definition: "when you work together with another person or group to achieve something", example: "The project has involved collaboration with the geography department." },
+  { phrase: "forge partnerships", definition: "to build new relationships between companies or organisations", example: "Several youth charities have forged partnerships to help homeless teenagers." },
+  { phrase: "form an alliance", definition: "to establish a relationship of working together", example: "The two companies formed an alliance to market computer services and software." },
+  { phrase: "fulfil your potential", definition: "to be as successful as you could possibly be", example: "We are confident that the new sales manager will fulfil his potential." },
+  { phrase: "gain a competitive edge", definition: "to have something that gives you an advantage over others", example: "Companies are employing more research teams to gain a competitive edge." },
+  { phrase: "outdo", definition: "to be better or more successful than someone else at doing something", example: "When it comes to speed of response, a small firm can outdo a big company." },
+  { phrase: "push beyond your limits", definition: "to go beyond what you are normally able to do", example: "He encouraged us to push beyond our limits to meet the sales targets." },
+  { phrase: "bankruptcy", definition: "the state of being unable to pay your debts", example: "In 1999 it was revealed that he was close to bankruptcy." },
+  { phrase: "competitiveness", definition: "the ability of a company, country, or product to compete with others", example: "New machinery has enhanced the company's productivity and competitiveness." },
+  { phrase: "cutback", definition: "a reduction in something, such as the number of workers or spending", example: "The shortage of teachers was blamed on government cutbacks." },
+  { phrase: "efficiency", definition: "the quality of doing something well without wasting time, money, or energy", example: "We need to improve the efficiency of the train service." },
+  { phrase: "initiative", definition: "an important new plan or process to achieve a particular aim", example: "This is a government initiative to help exporters." },
+  { phrase: "productivity", definition: "the rate at which goods are produced", example: "It cost the country $4 million in lost productivity." },
+  { phrase: "profitability", definition: "when a business makes a profit, or the amount of profit it makes", example: "They plan to increase profitability by making the factory more efficient." },
+  { phrase: "turnover", definition: "the amount of business done during a particular period", example: "The drugs industry has an annual turnover of some £200 billion." },
+  { phrase: "bonus scheme", definition: "a scheme in a company which adds money to wages for meeting objectives", example: "All the workers in the company participate in the bonus scheme." },
+  { phrase: "equal pay", definition: "the principle that men and women should be paid the same for the same work", example: "The campaign for equal pay has been continued by the trade-union movement." },
+  { phrase: "financial incentive", definition: "money offered to encourage someone to work harder", example: "Doctors are encouraged through financial incentives to work in poor areas." },
+  { phrase: "health insurance", definition: "insurance that will pay for medical treatment if someone is ill or injured", example: "These measures would protect people with health problems from losing their health insurance if they change jobs." },
+  { phrase: "job perks", definition: "something you get from your work in addition to wages", example: "One of the perks of working for a fashion designer is that you get to wear lots of nice clothes." },
+  { phrase: "maternity/paternity leave", definition: "time that a mother/father is allowed to spend away from work when they have a baby", example: "Karen will be on maternity leave next month." },
+  { phrase: "mentor programme", definition: "a programme that provides an experienced person who advises a less experienced person", example: "The company offers a mentor programme to recently qualified employees." },
+  { phrase: "on-site childcare", definition: "childcare that is provided at the place where people work or study", example: "Benefits include a staff canteen and on-site childcare." },
+  { phrase: "tuition assistance", definition: "help with payment for studies or a qualification", example: "We offer tuition assistance to staff members for work-related qualifications." }
+];
+
+        let current = 0;
+        let flipped = false;
+
+        const phraseEl = document.getElementById('phrase');
+        const definitionEl = document.getElementById('definition');
+        const exampleEl = document.getElementById('example');
+        const frontEl = document.getElementById('front');
+        const backEl = document.getElementById('back');
+        const counterEl = document.getElementById('counter');
+        const flashcardEl = document.getElementById('flashcard');
+
+        function showCard() {
+            if (flashcards.length === 0) {
+                phraseEl.textContent = "Brak fiszek";
+                counterEl.textContent = "0 / 0";
+                return;
+            }
+
+            const card = flashcards[current];
+            phraseEl.textContent = card.phrase;
+            definitionEl.textContent = card.definition;
+            exampleEl.textContent = card.example;
+            counterEl.textContent = `${current + 1} / ${flashcards.length}`;
+            
+            if (flipped) {
+                frontEl.classList.add('hidden');
+                backEl.classList.remove('hidden');
+            } else {
+                frontEl.classList.remove('hidden');
+                backEl.classList.add('hidden');
+            }
+        }
+
+        flashcardEl.addEventListener('click', () => {
+            flipped = !flipped;
+            showCard();
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            flipped = false;
+            current = (current + 1) % flashcards.length;
+            showCard();
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            flipped = false;
+            current = (current - 1 + flashcards.length) % flashcards.length;
+            showCard();
+        });
+
+        showCard();
+    </script>
+</body>
+</html>
