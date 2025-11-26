@@ -7,27 +7,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
-    <div class="min-h-screen p-4">
+    <div class="min-h-screen flex items-center justify-center p-4">
         <!-- Filtry -->
-        <div class="max-w-4xl mx-auto mb-6">
+        <div class="max-w-4xl w-full">
             <div class="bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-xl font-bold mb-4">Wybierz kategorie do nauki:</h2>
+                <h2 class="text-xl font-bold mb-4 text-center">Wybierz kategorie do nauki:</h2>
                 
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 justify-center">
                     <button onclick="toggleCategory('relationships')" class="cat-btn active" data-cat="relationships">
                         Relationships (U1)
                     </button>
                     <button onclick="toggleCategory('phrasal verbs')" class="cat-btn active" data-cat="phrasal verbs">
-                        Phrasal Verbs: Friendships (U1)
+                        Phrasal Verbs (U1)
                     </button>
                     <button onclick="toggleCategory('transformation')" class="cat-btn active" data-cat="transformation">
-                        Transforming places (U1)
+                        Transformation (U1)
                     </button>
                     <button onclick="toggleCategory('urban spaces')" class="cat-btn active" data-cat="urban spaces">
                         Urban Spaces (U1)
                     </button>
                     <button onclick="toggleCategory('idiomatic expressions')" class="cat-btn active" data-cat="idiomatic expressions">
-                        Idiomatic Expressions: Hobbies and interests (U1)
+                        Idiomatic Expressions (U1)
                     </button>
                     <button onclick="toggleCategory('the taste and texture of food')" class="cat-btn active" data-cat="the taste and texture of food">
                         The Taste and Texture of Food (U1)
@@ -54,7 +54,7 @@
         </div>
 
         <!-- Fiszka -->
-        <div id="flashcardContainer" class="max-w-md mx-auto hidden">
+        <div id="flashcardContainer" class="max-w-md w-full hidden">
             <div id="flashcard" class="bg-white rounded-lg shadow-lg p-8 cursor-pointer min-h-64 flex flex-col justify-center">
                 <div id="front" class="text-center">
                     <div class="text-3xl font-bold text-blue-600" id="phrase"></div>
